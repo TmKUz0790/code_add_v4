@@ -10,11 +10,11 @@ from django.shortcuts import render
 import requests
 
 
-@login_required
+# @login_required
 def send_serial_numbers(request):
-    if request.user.email != 'admin_akfa@gmail.com':
-        return render(request, 'send_serial_numbers.html', {'error': 'Sizda ruxsat mavjud emas ruxsat olish uchun biz '
-                                                                     'bilan boglaning: +998 97 776 22 07'})
+    # if request.user.email != 'admin_akfa@gmail.com':
+    #     return render(request, 'send_serial_numbers.html', {'error': 'Sizda ruxsat mavjud emas ruxsat olish uchun biz '
+    #                                                                  'bilan boglaning: +998 97 776 22 07'})
 
     if request.method == 'POST':
         serial_numbers = request.POST.get('serial_numbers')
