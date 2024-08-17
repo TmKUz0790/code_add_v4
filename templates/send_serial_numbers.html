@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Serial Numbers</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #e9ecef;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 80%;
+            max-width: 800px;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #343a40;
+            text-align: center;
+        }
+        .form-group label {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .form-control {
+            border-radius: 10px;
+            font-size: 18px;
+            padding: 15px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 15px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-size: 18px;
+        }
+        .feedback.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .feedback.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .invalid-sequence {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Akfa Comfort code add system </h1>
+    <form id="serialForm" method="POST">
+        {% csrf_token %}
+        {% load static %}
+        <div class="form-group">
+            <label for="serial_numbers">Kodlarni kiritish</label>
+            <textarea id="serial_numbers" name="serial_numbers" class="form-control" rows="8" placeholder="Kodlarni kiriting masalan: MZ10tmKUz4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Send</button>
+    </form>
+    <div id="feedback" class="feedback"></div>
+</div>
+
+<!-- Modal for Invalid Sequences -->
+<div class="modal fade" id="invalidSequencesModal" tabindex="-1" role="dialog" aria-labelledby="invalidSequencesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="invalidSequencesModalLabel">Invalid Serial Number</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="sequenceMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audio Element for Sound -->
+<audio id="errorSound" src="{% static 'music/errorv2.mp3' %}" preload="auto"></audio>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#serial_numbers').on('input', function() {
+            var input = $(this).val();
+            // Remove any existing commas and spaces
+            input = input.replace(/,/g, '').replace(/\s+/g, '');
+            // Split the input into 10-digit sequences
+            var sequences = input.match(/.{1,10}/g) || [];
+            // Remove duplicate sequences and sequences containing '/'
+            var uniqueSequences = [];
+            var sequenceSet = new Set();
+
+            sequences.forEach(function(sequence) {
+                if (!sequenceSet.has(sequence) && !sequence.includes('/')) {
+                    sequenceSet.add(sequence);
+                    uniqueSequences.push(sequence);
+                }
+            });
+
+            // Join the unique sequences with commas
+            var formatted = uniqueSequences.join(',');
+            // Update the textarea with formatted input
+            $(this).val(formatted);
+
+            // Check the last sequence if it is invalid and show modal
+            var lastSequence = uniqueSequences[uniqueSequences.length - 1];
+            if (lastSequence && lastSequence.length === 10 && !/^MZ|AV|FT|BN|BL|EN|EL|CL|CT|AD|C3/.test(lastSequence)) {
+                var message = '<span class="invalid-sequence">' + lastSequence + ' Siz xato kod kiritdingiz.</span>';
+                $('#sequenceMessage').html(message);
+                $('#invalidSequencesModal').modal('show');
+                $('#errorSound')[0].play(); // Play sound if invalid sequence is found
+            }
+        });
+
+        $('#serialForm').on('submit', function(event){
+            var serialNumbers = $('#serial_numbers').val().trim();
+
+            if(serialNumbers === ''){
+                event.preventDefault();
+                $('#feedback').text('Please enter at least one serial number.')
+                              .addClass('error')
+                              .removeClass('success')
+                              .show();
+            }
+        });
+
+        {% if error %}
+        $('#feedback').text('{{ error }}')
+                      .addClass('error')
+                      .removeClass('success')
+                      .show();
+        {% endif %}
+
+        {% if success %}
+        $('#feedback').text('{{ success }}')
+                      .addClass('success')
+                      .removeClass('error')
+                      .show();
+        {% endif %}
+    });
+</script>
+
+</body>
+</html>
