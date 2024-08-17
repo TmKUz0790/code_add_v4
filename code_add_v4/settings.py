@@ -26,22 +26,20 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-fallback-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['https://web-production-12a2.up.railway.app',
-                 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
-CORS_ORIGIN_ALLOW_ALL = True
-CSRF_TRUSTED_ORIGINS = ['https://web-production-12a2.up.railway.app',
-                        'http://localhost:8000']
-
-CORS_ALLOWED_ORIGINS = ['https://web-production-12a2.up.railway.app', 'http://localhost:8000']
-
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-]
+# CORS_ORIGIN_ALLOW_ALL = True
+# CSRF_TRUSTED_ORIGINS = ['*']
+#
+# CORS_ALLOWED_ORIGINS = ['*']
+#
+# CORS_ALLOW_METHODS = [
+#     'DELETE',
+#     'GET',
+#     'OPTIONS',
+#     'PATCH',
+#     'POST',
+# ]
 # Application definition
 
 INSTALLED_APPS = [
