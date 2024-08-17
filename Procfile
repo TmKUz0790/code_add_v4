@@ -1,1 +1,1 @@
-web: gunicorn code_add_v4 --log-file -
+web: gunicorn code_add_v4.wsgi:application --log-file -
