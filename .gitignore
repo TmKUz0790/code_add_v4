@@ -8,8 +8,9 @@ db.sqlite3
 # Ignore environment variables and sensitive files
 .env
 
-# Ignore Django migrations
-*/migrations/*
+# Ignore Django migrations (excluding __init__.py)
+**/migrations/*.py[cod]
+**/migrations/00*
 
 # Ignore static and media files
 /staticfiles/
@@ -21,3 +22,6 @@ Thumbs.db
 
 # Ignore virtual environment folder
 .venv/
+
+# Ignore log files
+*.log
