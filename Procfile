@@ -1,1 +1,1 @@
-gunicorn code_add_v4.wsgi:application --bind 0.0.0.0:8000 --timeout 120
+web: gunicorn code_add_v4.wsgi:application --bind 0.0.0.0:8000 --timeout 120
