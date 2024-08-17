@@ -28,9 +28,11 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['https://web-production-12a2.up.railway.app',
                  'localhost', '127.0.0.1']
+
 CORS_ORIGIN_ALLOW_ALL = True
 CSRF_TRUSTED_ORIGINS = ['https://web-production-12a2.up.railway.app',
                         'http://localhost:8000']
+
 CORS_ALLOWED_ORIGINS = ['https://web-production-12a2.up.railway.app', 'http://localhost:8000']
 
 CORS_ALLOW_METHODS = [
