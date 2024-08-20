@@ -23,13 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'ydyol)o^#u@t-o=vu3p#1xn7_7#pi6n#(=6goo97n*zc!v4bu&')
 CSRF_TRUSTED_ORIGINS = [
-    'https://web-production-70ba.up.railway.app',
-    'web-production-70ba.up.railway.app',
-    'http://web-production-70ba.up.railway.app'
+    'https://web-production-70ba.up.railway.app'
+
 ]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 #
