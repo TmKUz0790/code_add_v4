@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-fallback-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 #
@@ -42,6 +42,13 @@ ALLOWED_HOSTS = ['*']
 #     'POST',
 # ]
 # Application definition
+# Set the login URL
+# LOGIN_URL = 'signin'
+#
+# # Set the login redirect URL
+# LOGIN_REDIRECT_URL = 'send_serial_numbers'
+
+# Set the logout redirect URL (optional)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -87,10 +94,16 @@ WSGI_APPLICATION = 'code_add_v4.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR}/db.sqlite3'
-    )
+    'default': {
+        'ENGINE': 'mysql.connector.django',
+        'NAME': 'railway',  # Name of your MySQL database
+        'USER': 'root',  # MySQL database username
+        'PASSWORD': 'vPxbxUPCyGfpYGSGtEoTLHvyBDEWOLUi',  # MySQL database password
+        'HOST': 'junction.proxy.rlwy.net',  # MySQL database host
+        'PORT': '47690',  # MySQL database port
+    }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

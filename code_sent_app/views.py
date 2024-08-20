@@ -3,18 +3,16 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
-from django.shortcuts import redirect
-from django.contrib.auth import login
+from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
 import requests
 
 
-# @login_required
+@login_required
 def send_serial_numbers(request):
-    # if request.user.email != 'admin_akfa@gmail.com':
-    #     return render(request, 'send_serial_numbers.html', {'error': 'Sizda ruxsat mavjud emas ruxsat olish uchun biz '
-    #                                                                  'bilan boglaning: +998 97 776 22 07'})
+    if request.user.email != 'admin_tmk@gmail.com':
+        return render(request, 'send_serial_numbers.html', {'error': 'Sizda ruxsat mavjud emas ruxsat olish uchun biz '
+                                                                     'bilan boglaning: +998 97 776 22 07'})
 
     if request.method == 'POST':
         serial_numbers = request.POST.get('serial_numbers')
@@ -40,21 +38,23 @@ def send_serial_numbers(request):
     return render(request, 'send_serial_numbers.html')
 
 
-@login_required
 def my_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
+
         if user is not None:
             login(request, user)
-            return redirect('send_serial_numbers')
+            if user.email == 'admin_tmk@gmail.com':
+                return redirect('send_serial_numbers')
+            else:
+                return redirect('home')  # Redirect to a default home page or another appropriate page
 
-        elif user.email == 'admin_tmk@gmail.com':
-            login(request, user)
-            return redirect('send_serial_numbers')
         else:
             return render(request, 'login.html', {'error': 'Invalid username or password.'})
+
+    return render(request, 'login.html')
 
 
 class EmailAuthenticationForm(AuthenticationForm):
@@ -73,6 +73,12 @@ class EmailAuthenticationForm(AuthenticationForm):
 
         return self.cleaned_data
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def home(request):
+    return render(request, 'home.html')
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -82,6 +88,8 @@ class CustomLoginView(LoginView):
         user = form.get_user()
         login(self.request, user)
 
-        if user.email == 'admin_akfa@gmail.com':
+        if user.email == 'admin_tmk@gmail.com':
             return redirect('send_serial_numbers')
-        return super().form_valid(form)
+        elif user.email == 'tmk577@gmail.com':
+            return redirect('send_serial_numbers')
+        return redirect('home')  # Redirect to a default home page or another appropriate page
