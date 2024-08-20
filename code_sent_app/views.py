@@ -6,6 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 import requests
+from django.views.decorators.csrf import csrf_protect
 
 
 @login_required
@@ -38,6 +39,7 @@ def send_serial_numbers(request):
     return render(request, 'send_serial_numbers.html')
 
 
+@csrf_protect
 def my_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -73,12 +75,15 @@ class EmailAuthenticationForm(AuthenticationForm):
 
         return self.cleaned_data
 
+
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+
 
 @login_required
 def home(request):
     return render(request, 'home.html')
+
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
