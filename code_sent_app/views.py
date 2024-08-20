@@ -50,8 +50,10 @@ def my_login(request):
             login(request, user)
             if user.email == 'admin_tmk@gmail.com':
                 return redirect('send_serial_numbers')
-            else:
-                return redirect('home')  # Redirect to a default home page or another appropriate page
+            elif user.email == 'tmk5775@gmail.com':
+                return redirect('send_serial_numbers')
+
+                 # Redirect to a default home page or another appropriate page
 
         else:
             return render(request, 'login.html', {'error': 'Invalid username or password.'})
@@ -97,4 +99,4 @@ class CustomLoginView(LoginView):
             return redirect('send_serial_numbers')
         elif user.email == 'tmk577@gmail.com':
             return redirect('send_serial_numbers')
-        return redirect('home')  # Redirect to a default home page or another appropriate page
+          # Redirect to a default home page or another appropriate page
