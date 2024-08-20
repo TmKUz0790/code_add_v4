@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_protect
 
 @login_required
 def send_serial_numbers(request):
-    if request.user.email != 'admin_tmk@gmail.com':
+    if request.user.email != 'tmk5775@gmail.com':
         return render(request, 'send_serial_numbers.html', {'error': 'Sizda ruxsat mavjud emas ruxsat olish uchun biz '
                                                                      'bilan boglaning: +998 97 776 22 07'})
 
@@ -53,7 +53,6 @@ def my_login(request):
             elif user.email == 'tmk5775@gmail.com':
                 return redirect('send_serial_numbers')
 
-                 # Redirect to a default home page or another appropriate page
 
         else:
             return render(request, 'login.html', {'error': 'Invalid username or password.'})
@@ -97,6 +96,8 @@ class CustomLoginView(LoginView):
 
         if user.email == 'admin_tmk@gmail.com':
             return redirect('send_serial_numbers')
-        elif user.email == 'tmk577@gmail.com':
+        elif user.email == 'tmk5775@gmail.com':
             return redirect('send_serial_numbers')
-          # Redirect to a default home page or another appropriate page
+        else:
+            # Redirect to a default home page or another appropriate page
+            return redirect('home')
