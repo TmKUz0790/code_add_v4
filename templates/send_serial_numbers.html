@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Send Serial Numbers</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #e9ecef;
@@ -79,7 +79,7 @@
 <body>
 
 <div class="container">
-    <h1>Akfa Comfort code add system </h1>
+    <h1>Akfa Comfort code add system</h1>
     <form id="serialForm" method="POST">
         {% csrf_token %}
         {% load static %}
@@ -115,9 +115,9 @@
 <!-- Audio Element for Sound -->
 <audio id="errorSound" src="{% static 'music/errorv2.mp3' %}" preload="auto"></audio>
 
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.6/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.0.6/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function(){
         $('#serial_numbers').on('input', function() {
