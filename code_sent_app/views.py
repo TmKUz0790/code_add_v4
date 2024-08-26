@@ -30,7 +30,7 @@ def send_serial_numbers(request):
                 failed_serials.append(serial_number)
 
         if failed_serials:
-            error_message = f"Bu kodlar yuborilmadi sabab ular allaqachon majvud yoki no'to'g'ri : {', '.join(failed_serials)}"
+            error_message = f"Bu kodlar yuborilmadi sabab ular allaqachon majvud yoki xato kiritilgan : {', '.join(failed_serials)}"
             return render(request, 'send_serial_numbers.html', {'error': error_message})
         else:
             success_message = "Barcha kodlar muvaffaqiyatli yuborildi."
