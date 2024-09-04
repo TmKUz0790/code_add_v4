@@ -8,29 +8,58 @@ from django.contrib.auth.decorators import login_required
 import requests
 from django.views.decorators.csrf import csrf_protect
 
+# @login_required
+# def send_serial_numbers(request):
+#     if request.user.email != 'tmk5775@gmail.com':
+#         return render(request, 'send_serial_numbers.html', {'error': 'Sizda ruxsat mavjud emas ruxsat olish uchun biz '
+#                                                                      'bilan boglaning: +998 97 776 22 07'})
+#
+#     if request.method == 'POST':
+#         serial_numbers = request.POST.get('serial_numbers')
+#         # Split the input by commas and strip any extra whitespace from each serial number
+#         serial_numbers_list = [s.strip() for s in serial_numbers.split(',') if s.strip()]
+#         failed_serials = []
+#
+#         url = 'https://api.akfacomfort.uz/services/admin/api/codes/akfa-code'
+#
+#         for serial_number in serial_numbers_list:
+#             payload = {'serialNumber': serial_number}
+#             response = requests.post(url, json=payload)
+#             if response.status_code != 200:
+#                 failed_serials.append(serial_number)
+#
+#         if failed_serials:
+#             error_message = f"Bu kodlar yuborilmadi sabab ular allaqachon majvud yoki xato kiritilgan : {', '.join(failed_serials)}"
+#             return render(request, 'send_serial_numbers.html', {'error': error_message})
+#         else:
+#             success_message = "Barcha kodlar muvaffaqiyatli yuborildi."
+#             return render(request, 'send_serial_numbers.html', {'success': success_message})
+#
+#     return render(request, 'send_serial_numbers.html')
+#
+
+import asyncio
+import aiohttp
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 
 @login_required
 def send_serial_numbers(request):
     if request.user.email != 'tmk5775@gmail.com':
-        return render(request, 'send_serial_numbers.html', {'error': 'Sizda ruxsat mavjud emas ruxsat olish uchun biz '
-                                                                     'bilan boglaning: +998 97 776 22 07'})
+        return render(request, 'send_serial_numbers.html', {'error': 'Sizda ruxsat mavjud emas ruxsat olish uchun biz bilan boglaning: +998 97 776 22 07'})
 
     if request.method == 'POST':
         serial_numbers = request.POST.get('serial_numbers')
-        # Split the input by commas and strip any extra whitespace from each serial number
         serial_numbers_list = [s.strip() for s in serial_numbers.split(',') if s.strip()]
-        failed_serials = []
 
-        url = 'https://api.akfacomfort.uz/services/admin/api/codes/akfa-code'
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        result = loop.run_until_complete(send_codes_async(serial_numbers_list))
+        loop.close()
 
-        for serial_number in serial_numbers_list:
-            payload = {'serialNumber': serial_number}
-            response = requests.post(url, json=payload)
-            if response.status_code != 200:
-                failed_serials.append(serial_number)
-
-        if failed_serials:
-            error_message = f"Bu kodlar yuborilmadi sabab ular allaqachon majvud yoki xato kiritilgan : {', '.join(failed_serials)}"
+        if result['failed']:
+            error_message = f"Bu kodlar yuborilmadi sabab ular allaqachon majvud yoki xato kiritilgan : {', '.join(result['failed'])}"
             return render(request, 'send_serial_numbers.html', {'error': error_message})
         else:
             success_message = "Barcha kodlar muvaffaqiyatli yuborildi."
@@ -38,6 +67,22 @@ def send_serial_numbers(request):
 
     return render(request, 'send_serial_numbers.html')
 
+async def send_codes_async(serial_numbers):
+    url = 'https://api.akfacomfort.uz/services/admin/api/codes/akfa-code'
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for number in serial_numbers:
+            task = asyncio.ensure_future(send_code(session, url, number))
+            tasks.append(task)
+        responses = await asyncio.gather(*tasks)
+
+        failed_serials = [num for res, num in zip(responses, serial_numbers) if res != 200]
+        return {'failed': failed_serials}
+
+async def send_code(session, url, serial_number):
+    payload = {'serialNumber': serial_number}
+    async with session.post(url, json=payload) as response:
+        return response.status
 
 @csrf_protect
 def my_login(request):
@@ -99,5 +144,4 @@ class CustomLoginView(LoginView):
         elif user.email == 'tmk5775@gmail.com':
             return redirect('send_serial_numbers')
         else:
-            # Redirect to a default home page or another appropriate page
             return redirect('home')
