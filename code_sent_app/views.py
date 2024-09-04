@@ -83,7 +83,7 @@ def send_serial_numbers(request):
 #     payload = {'serialNumber': serial_number}
 #     async with session.post(url, json=payload) as response:
 #         return response.status
-
+#
 @csrf_protect
 def my_login(request):
     if request.method == 'POST':
