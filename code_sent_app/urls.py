@@ -1,12 +1,8 @@
-# serial_sender/urls.py
-
 from django.urls import path
-from .views import send_serial_numbers,CustomLoginView,home
-from django.contrib.auth import views as auth_views
+from .views import my_login, select_choice, send_serial_numbers, CustomLoginView
 
 urlpatterns = [
-    path('send-serial-numbers/', send_serial_numbers, name='send_serial_numbers'),
-    #path('home/', home, name='home'),
     path('', CustomLoginView.as_view(), name='login'),
-
+    path('select_choice/', select_choice, name='select_choice'),
+    path('send_serial_numbers/', send_serial_numbers, name='send_serial_numbers'),
 ]

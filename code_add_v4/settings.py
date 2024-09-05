@@ -100,12 +100,12 @@ WSGI_APPLICATION = 'code_add_v4.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
-        'NAME': 'railway',  # Name of your MySQL database
-        'USER': 'root',  # MySQL database username
-        'PASSWORD': 'vPxbxUPCyGfpYGSGtEoTLHvyBDEWOLUi',  # MySQL database password
-        'HOST': 'junction.proxy.rlwy.net',  # MySQL database host
-        'PORT': '47690',  # MySQL database port
+        'ENGINE': 'mysql.connector.django',  # The database engine for MySQL
+        'NAME': 'railway',  # The name of your MySQL database
+        'USER': 'root',  # The MySQL database username
+        'PASSWORD': 'ztRSKMInpzwZmQRbmjplhqiyefrQuMve',  # The MySQL database password
+        'HOST': 'junction.proxy.rlwy.net',  # The MySQL database host
+        'PORT': '42260',  # The custom MySQL database port
     }
 }
 
