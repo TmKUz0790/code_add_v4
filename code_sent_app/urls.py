@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import my_login, select_choice, send_serial_numbers, CustomLoginView
+from . import views
 
 urlpatterns = [
-    path('', CustomLoginView.as_view(), name='login'),
-    path('select_choice/', select_choice, name='select_choice'),
-    path('send_serial_numbers/', send_serial_numbers, name='send_serial_numbers'),
+    path('', views.my_login, name='login'),
+    path('select-choice/', views.select_choice, name='select_choice'),
+    path('send-serial-numbers/', views.send_serial_numbers, name='send_serial_numbers'),
+    path('choice-serial/', views.choice_serial_view, name='choice_serial_view'),
 ]
