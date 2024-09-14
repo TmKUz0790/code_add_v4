@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choice and Serial Numbers</title>
+    <title>Choice and Serial Numbers with Barcode Scanner</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -26,12 +26,15 @@
         #scanner-container {
             margin-top: 20px;
             position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
             display: none; /* Initially hidden until the user clicks scan */
         }
         #scanner {
             width: 100%;
             height: auto;
-            display: block; /* Ensure video element is displayed */
+            display: block;
         }
         #scanner-overlay {
             position: absolute;
@@ -75,7 +78,7 @@
                             <button type="button" class="btn btn-outline-secondary mt-2" id="start-scan">Scan Barcode</button>
                         </div>
                         <div id="scanner-container">
-                            <video id="scanner"></video>
+                            <video id="scanner" autoplay playsinline></video>
                             <div id="scanner-overlay">
                                 <div class="red-line"></div>
                             </div>
@@ -138,18 +141,26 @@
                     target: scanner, // Video element for live scanning
                     constraints: {
                         facingMode: "environment", // Use the rear camera of the device
-                        width: { ideal: 1280 }, // Set width constraints
-                        height: { ideal: 720 } // Set height constraints
+                        width: 640,
+                        height: 480
                     }
                 },
+                locator: {
+                    patchSize: "medium",
+                    halfSample: true
+                },
+                numOfWorkers: navigator.hardwareConcurrency || 4,
                 decoder: {
                     readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader"] // Barcode formats
-                }
+                },
+                locate: true
             }, function (err) {
                 if (err) {
                     console.error(err);
+                    alert("Error initializing Quagga: " + err);
                     return;
                 }
+                console.log("Initialization finished. Ready to start.");
                 Quagga.start();
             });
 
@@ -159,6 +170,20 @@
                 document.getElementById('serial_number').value = code; // Set the scanned code to the serial number input
                 Quagga.stop(); // Stop the scanner after a successful scan
                 scannerContainer.style.display = 'none'; // Hide the scanner after scanning
+            });
+
+            Quagga.onProcessed(function (result) {
+                const drawingCtx = Quagga.canvas.ctx.overlay,
+                      drawingCanvas = Quagga.canvas.dom.overlay;
+
+                if (result) {
+                    if (result.boxes) {
+                        drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.width), parseInt(drawingCanvas.height));
+                        result.boxes.filter(box => box !== result.box).forEach(function (box) {
+                            Quagga.ImageDebug.drawPath(box, {x: 0, y: 1}, drawingCtx, {color: "green", lineWidth: 2});
+                        });
+                    }
+                }
             });
         });
     </script>
